@@ -1,0 +1,841 @@
+
+
+c = [1, 2, 3, 4, 5, ]
+-   there is additional comma at the end of the list for maintainability
+
+for-loop in dictionary
+
+    for key in dict:
+        print(key, dict[key])
+
+sample: fetch http and get response in bytes object
+
+http.client.HTTPResponse object at 0x104b94d60>
+>>> story_words = []
+>>> for line in story:
+...     line_words = line.split()
+...     for word in line_words:
+...             story_words.append(word)
+...
+>>> story.close()
+>>> story_words
+[b'It', b'was', b'the', b'best', b'of', b'times', b'it', b'was', b'the', b'worst', b'of', b'times', b'it', b'was', b'the', b'age', b'of', b'wisdom', b'it', b'was', b'the', b'age', b'of', b'foolishness', b'it', b'was', b'the', b'epoch', b'of', b'belief', b'it', b'was', b'the', b'epoch', b'of', b'incredulity', b'it', b'was', b'the', b'season', b'of', b'Light', b'it', b'was', b'the', b'season', b'of', b'Darkness', b'it', b'was', b'the', b'spring', b'of', b'hope', b'it', b'was', b'the', b'winter', b'of', b'despair', b'we', b'had', b'everything', b'before', b'us', b'we', b'had', b'nothing', b'before', b'us', b'we', b'were', b'all', b'going', b'direct', b'to', b'Heaven', b'we', b'were', b'all', b'going', b'direct', b'the', b'other', b'way', b'in', b'short', b'the', b'period', b'was', b'so', b'far', b'like', b'the', b'present', b'period', b'that', b'some', b'of', b'its', b'noisiest', b'authorities', b'insisted', b'on', b'its', b'being', b'received', b'for', b'good', b'or', b'for', b'evil', b'in', b'the', b'superlative', b'degree', b'of', b'comparison', b'only']
+>>> story = urlopen('http://sixty-north.com/c/t.txt')
+>>> story_words = []
+>>> for line in story:
+...     line_words = line.decode('utf8').split()
+...     for word in line_words:
+...             story_words.append(word)
+...
+>>> story.close()
+>>> story_words
+['It', 'was', 'the', 'best', 'of', 'times', 'it', 'was', 'the', 'worst', 'of', 'times', 'it', 'was', 'the', 'age', 'of', 'wisdom', 'it', 'was', 'the', 'age', 'of', 'foolishness', 'it', 'was', 'the', 'epoch', 'of', 'belief', 'it', 'was', 'the', 'epoch', 'of', 'incredulity', 'it', 'was', 'the', 'season', 'of', 'Light', 'it', 'was', 'the', 'season', 'of', 'Darkness', 'it', 'was', 'the', 'spring', 'of', 'hope', 'it', 'was', 'the', 'winter', 'of', 'despair', 'we', 'had', 'everything', 'before', 'us', 'we', 'had', 'nothing', 'before', 'us', 'we', 'were', 'all', 'going', 'direct', 'to', 'Heaven', 'we', 'were', 'all', 'going', 'direct', 'the', 'other', 'way', 'in', 'short', 'the', 'period', 'was', 'so', 'far', 'like', 'the', 'present', 'period', 'that', 'some', 'of', 'its', 'noisiest', 'authorities', 'insisted', 'on', 'its', 'being', 'received', 'for', 'good', 'or', 'for', 'evil', 'in', 'the', 'superlative', 'degree', 'of', 'comparison', 'only']
+
+Early return
+------------
+
+- in order to eliminate function side-effects, use blank return statement.
+- compiler actually will return None
+- e.g.
+    def even_or_odd(n);
+        if n % 2 == 0:
+            print('even')
+            return
+        print('odd')
+        return // or eliminate this return because the compiler will use the implicit return
+
+ >>> w = even_or_odd(33)
+ odd
+ >>> w is None
+ True
+ >>>
+
+ def nth_root(radicanf, n):
+    return radicand ** (1/n)
+
+ variables in Python are immutables
+ x = 1000
+ x = 500    # this will create a new int object with value of 500 and reassign x to point to this object
+            # the int 1000 object will be out of reference and be collected by the garbage collector
+
+Everything is an object
+
+Python uses named reference to object rather than variable to value
+
+ id()
+    # returns a unique integer identifier for an object that is constant for the life of the object
+
+    a = 490
+    id(a)
+    >>> 4301474256      # id number that refers the int object
+    b = 10993
+    id(b)
+    >>> 430138994
+    b = a               # both a and b are referring to the same object
+    id(b)
+    >>> 4301474256      # b is referring to the object that a is also referring to
+    a is b
+    >>> True
+
+Passing arguments and returning values
+
+    variables are being passed as references in functions as arguments
+    - objects that being pointed by the references can be affected by the functions bodies
+    - if mutable objects, their values can be updated
+    - NO COPY is made
+
+        e.g
+            m = [1, 2, 3]
+            def modify(k):
+                k.append(48)            // updating the object. if k being rereference
+                                        // then new object will created and m is not affected
+                                        // e.g. h = k
+                                                h.append(48)
+                print("k = ", k)
+
+        >>> modify(m)
+        k = [1, 2, 3, 48]
+        >>> m
+        [1, 2, 3, 48]
+
+    references to objects are copied but NOT THE OBJECTS themselves (values)
+    -   values are in a form of objects
+
+    returns are returning references and not values (objects)
+
+   Functions arguments
+        - default arguments must come last
+             -  when default arguments are evaluated
+                - only evaluated once
+                - when function being defines
+                - mutable default values will produce side effects
+                - default values are placed at global scope
+                - values be added up if not careful
+                - better to use immutable default values
+
+            - mutable default values
+                def add_spam(menu=[]):
+                    menu.append('spam')
+
+            - immutable default values
+                def add_spam(menu=None):
+                    if menu is None:
+                        menu = []
+                    menu.append('spam')
+
+        - arguments can be supplied in2 ways:
+            - posiitonal (in order) e.g. func("ali", "*")
+            - keyword (any order) e.g. func(border="*", name="ali")
+
+    Python dynamic type System
+    Python uses strong typing
+        - strong typing will not coerce types implicitly between types
+            consider:
+                def add_up(a, b):
+                    return a + b
+
+            >>> add_up("a", " ball")
+            >>> a ball
+            >>> add_up(13, 5)
+            >>> 18
+            >>> add_up(3, "cat")
+            >>> error!!!
+
+Named reference Scopes
+    - LEGB
+    Local, Enclosing, Global, Built-In
+    - use 'global' keyword to assign to global references from a local scope
+
+Built-in Collections
+    tuple - immutable aequence of arbitrary objects
+    range - arithmetic progression of integers
+    set   - mutable collection of uniquw immutable objects
+    protocols - unite collections
+
+    tuple
+        -   >>> t = ("Norway", 4.98, 3)
+            >>> t[0]
+            'Norway'
+            >``>> len(t)
+            3
+            >>> for item in t:
+            ...     print(item)
+            ...
+            Norway
+            4.98
+            3
+            >>> t + ("additional item in tuple", False)
+            ('Norway', 4.98, 3, 'additional item in tuple', False)
+            >>> t * 2
+            ('Norway', 4.98, 3, 'Norway', 4.98, 3)
+            >>> t2 = t + ("additional item in tuple", False)
+            >>> t2
+            ('Norway', 4.98, 3, 'additional item in tuple', False)
+            >>> t2 * 2
+            ('Norway', 4.98, 3, 'additional item in tuple', False, 'Norway', 4.98, 3, 'additional item in tuple', False)
+            >>>
+
+        nested tuple
+            >>> nested_tuple = (t, t2)
+            >>> nested_tuple
+            (('Norway', 4.98, 3), ('Norway', 4.98, 3, 'additional item in tuple', False))
+            >>> nested_tuple[2][3]
+            Traceback (most recent call last):
+              File "<stdin>", line 1, in <module>
+            IndexError: tuple index out of range
+            >>> nested_tuple[1][3]
+            'additional item in tuple'
+            >>>
+
+        single element tuple
+            >>> h = (391)
+            >>> type(h)
+            <class 'int'>
+            >>> k = (391,)
+            >>> type(k)
+            <class 'tuple'>
+>
+        empty tuple
+            t2 = ()
+
+        eliminate parenthesis tuple
+            - p = 1, 1, 1, 4, 6
+            - useful when returning tuple in a function
+            - def minmax(items):
+                return min(items), max(items)
+
+        tuple unpacking
+            - destructuring operation that unpacks data structures into named references
+            - e.g.
+                lower, upper = minmax([83, 33, 45, 78, 17])
+                lower   17
+                upper   83
+
+            - e.g. (nested tuple)
+                (a, (b, (c, d))) = (8, (5, (2, 1)))
+
+            - e.g. (swapping)
+                a = "bean"
+                b = "jelly"
+                a, b = b, a
+                >>> a "jelly"
+                >>> b "bean"
+
+            tuple constructor (list and string)
+                >>> tuple([561, 2205, 1729, 1878])
+                (561, 2205, 1729, 1878)
+                >>> tuple("Cinderella")
+                ('C', 'i', 'n', 'd', 'e', 'r', 'e', 'l', 'l', 'a')
+
+            tuple containment test
+                >>> 5 in (3, 4, 5, 6, 8)
+                True
+                >>> 10 not in (3, 4, 5, 7, 8)
+                True
+                >>>
+
+
+    string
+        - immutable
+        - len()
+        - str.join()
+            is more performant than concatenation
+                - concatenation (+) results in creating temporaries that use memory allocations and copies
+            >>> passage = " ".join(['this', 'is', 'a', 'passage'])
+            >>> passage
+            'this is a passage'
+            >>> passage.split(" ")
+            ['this', 'is', 'a', 'passage']
+
+        - str.partition()
+            commonly used with tupe unpacking (destructuring)
+            >>> departure, separator, arrival = "London:Edinburg".partition(':')
+            >>> departure
+            'London'
+            >>> arrival
+            'Edinburg'
+            >>>
+            >>> departure, _, arrival = "London:Edinburg".partition(':')
+            >>> departure
+            'London'
+            >>> arrival
+            'Edinburg'
+
+            >>> "umbrella".partition("brel")
+            ('um', 'brel', 'la')
+            >>>
+
+        string formatting
+            str.format(...)
+            replacement fields are marked by {0}, {1}, and so on
+            format(values, values) to be replaced
+
+                >>>
+                >>> "{0} north {1} east".format(80.3, 15.9)
+                '80.3 north 15.9 east'
+                >>>
+
+            format is positional
+
+                >>> "The age of {0} is {1}. {0}'s birthday is on {2}".format("Moazak", 53, "1st of May, 1969")
+                "The age of Moazak is 53. Moazak's birthday is on 1st of May, 1969"
+                >>> "Back and forth to {} and {}".format('Sun', 'Moon')
+                'Back and forth to Sun and Moon'
+                >>>
+
+            named formatting and using index of collections
+                >>> 'Current position is {latitude} {longitude}'.format(latitude='60N', longitude='70E')
+                'Current position is 60N 70E'
+                >>>
+                >>> import math
+                >>> 'Math constants: pi={m.pi}, exponent={m.e}'.format(m=math)
+                'Math constants: pi=3.141592653589793, exponent=2.718281828459045'
+                >>> 'Math constants: pi={m.pi: .3f}, exponent={m.e: .3f}'.format(m=math)
+                'Math constants: pi= 3.142, exponent= 2.718'
+
+            PEP 498: Literal String Interpolation for Python version > 3.6
+                - commonly called f-string
+                - embed expressions inside literal strings, using a minimal syntax
+                - expression {...} is evaluated and inserted at runtime
+
+                    >>> f'one plus one is {1 + 1}'
+                    'one plus one is 2'
+                    >>> value = 88 * 8
+                    >>> f'The result of 88 * 8 is {value}'
+                    'The result of 88 * 8 is 704'
+                    >>> import datetime
+                    >>> f'The current time is {datetime.datetime.now().isoformat()}'
+                    'The current time is 2022-07-12T14:19:44.364915'
+                    >>> import math
+                    >>> f'Math constants: pi={math.pi: .5f}, exp={math.e: .5f}'
+                    'Math constants: pi= 3.14159, exp= 2.71828'
+                    >>>
+
+    Range
+        sequence representing an arithmetic progression of integers
+        range constructor
+            range(stop), range(start, stop), range(start, stop, step)
+            range(inclusive number, exclusive number, optional: step)
+            range does NOT support keyword arguments
+
+                >>> range(5, 10)
+                range(5, 10)
+                >>> list(range(5,10))
+                [5, 6, 7, 8, 9]
+                >>> list(range(3, 15, 3))
+                [3, 6, 9, 12]
+                >>>
+
+
+            don't use like this
+                s = [1, 2, 3]
+                for i in range(s)
+            prefer enumeration to range
+                - enumerate()
+                    constructs an iterable of (index, value) tuples around another iterables
+
+                        >>> t = [6, 786, 889, 39984, 3899883]
+                        >>> for p in enumerate(t):
+                        ...     print(p)
+                        ...
+                        (0, 6)
+                        (1, 786)
+                        (2, 889)
+                        (3, 39984)
+                        (4, 3899883)
+                        >>>
+                        >>> for i, v in enumerate(t):
+                        ...     print(f'index = {i}, value = {v}')
+                        ...
+                        index = 0, value = 6
+                        index = 1, value = 786
+                        index = 2, value = 889
+                        index = 3, value = 39984
+                        index = 4, value = 3899883
+                        >>>
+
+    List
+        negative index is one-base and NOT zero-base
+        r = [1, 2, 3, 4]
+        r[0] === r[-0]
+
+        slicing
+            extended form of indexing for referring to a portion of a list or other sequence
+            a_list[start:stop] => a_list[inclusive:exclusive], exclusive can be more than length
+
+                >>> a_list = [3, 8, 9, 15, 37, 78]
+                >>> a_list[2:6]
+                [9, 15, 37, 78]
+                >>> a_list[2:7]
+                [9, 15, 37, 78]
+                >>> a_list[2:5]
+                [9, 15, 37]
+                >>>
+                >>>
+                >>> a_list[1:-1]
+                [8, 9, 15, 37]
+                >>>
+                >>> a_list[0:]
+                [3, 8, 9, 15, 37, 78]
+                >>> a_list[:5]
+                [3, 8, 9, 15, 37]
+                >>> a_list[:]
+                [3, 8, 9, 15, 37, 78]
+                >>>
+
+            same reference to object
+                >>> t = a_list
+                >>> t is a_list
+                True
+
+            making new list, so not reference to the same object
+                >>> r = t[:]
+                >>> r is t
+                False
+
+            but, have the same values
+                >>> r == t
+                True
+                >
+
+            other methods of making new list with copying object (values)
+                >>> u = r.copy()
+                >>> v = list(u)     # this is preferable method as it could work to any iterable
+
+           but all of these are shallow copies
+
+                >> t[0]
+                3
+                >>> r[0]
+                3
+                >>> t[0] is r[0]
+                True
+                >>> t
+                [3, 8, 9, 15, 37, 78]
+                >>> r
+                [3, 8, 9, 15, 37, 78]
+                >>> t[0] = [0.1, 0.2, 0.3]
+                >>> t
+                [[0.1, 0.2, 0.3], 8, 9, 15, 37, 78]
+                >>> r
+                [3, 8, 9, 15, 37, 78]
+                >>> t[0] is r[0]
+                False
+                >>> t[1] = r[0]
+                >>> t
+                [[0.1, 0.2, 0.3], 3, 9, 15, 37, 78]
+                >>> t[1] is r[1]
+                False
+                >>> t[1] is r[:]
+                False
+                >>> t[1] is r
+                False
+
+            list repetitions
+
+                >>>
+                >>> c = [21, 43]
+                >>> d = c * 3
+                >>> d
+                [21, 43, 21, 43, 21, 43]
+                >>> [8] * 8
+                [8, 8, 8, 8, 8, 8, 8, 8]
+                >>> s = [[-3, 8]] * 3
+                >>> s
+                [[-3, 8], [-3, 8], [-3, 8]]
+
+            careful as each element in the outer list refer to the same inner list element
+            - consider using list.index() method
+                >>> s[2].append('A')
+                >>> s
+                [[-3, 8, 'A'], [-3, 8, 'A'], [-3, 8, 'A']]
+                >>>
+                >>> s
+                [[-3, 8, 'A'], [-3, 8, 'A'], [-3, 8, 'A']]
+                >>> type(s[0])
+                <class 'list'>          # appenf only works on list
+                >>> type(s[0][1])
+                <class 'int'>           # not on primitives
+                >>> type(s[0][2])
+                <class 'str'>
+                >>>
+                >>> s[0][2].append('B')
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                AttributeError: 'str' object has no attribute 'append'
+                >>>
+
+           delete element from the list using index
+                del a_list[index]
+
+           remove element from the list using value
+                a_list.remove('value')
+
+           inserting an item into a list
+                accepts an item and the index of the new item
+
+                >>>
+                >>> a = 'I accidently the whole planet'.split()
+                >>> a
+                ['I', 'accidently', 'the', 'whole', 'planet']
+                >>> a.insert(2, 'destroyed')
+                >>> a
+                ['I', 'accidently', 'destroyed', 'the', 'whole', 'planet']
+                >>> ' '.join(a)
+                'I accidently destroyed the whole planet'
+                >>>
+
+           concatenation of list
+
+                >>>
+                >>> m = [2, 1, 8]
+                >>> n = [12, 13, 15]
+                >>> k = m + n
+                >>> k
+                [2, 1, 8, 12, 13, 15]
+                >>> k += [100, 200, 300]
+                >>> k
+                [2, 1, 8, 12, 13, 15, 100, 200, 300]
+                >>> k.extend(['aa', 'bb', 'ff'])
+                >>> k
+                [2, 1, 8, 12, 13, 15, 100, 200, 300, 'aa', 'bb', 'ff']
+                >>>
+
+           list.reverse() and list.sort() => MUTABLE METHODS
+
+                >>> k.reverse()
+                >>> k
+                ['ff', 'bb', 'aa', 300, 200, 100, 15, 13, 12, 8, 1, 2]
+                >>> k.sort()
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                TypeError: '<' not supported between instances of 'int' and 'str'
+                >>> k.sort(reverse=True)
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                TypeError: '<' not supported between instances of 'str' and 'int'
+                >>> k.reverse()
+                >>> k
+                [1, 2, 8, 12, 13, 15, 100, 200, 300, 'aa', 'bb', 'ff']
+                >>> k.remove(-1)
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                ValueError: list.remove(x): x not in list
+                >>> k[:-3]
+                [1, 2, 8, 12, 13, 15, 100, 200, 300]
+                >>> l = k[:-3]
+                >>> l
+                [1, 2, 8, 12, 13, 15, 100, 200, 300]
+                >>> k[:-1]
+                [1, 2, 8, 12, 13, 15, 100, 200, 300, 'aa', 'bb']
+                >>> l.sort(reverse=True)
+                >>> l
+                [300, 200, 100, 15, 13, 12, 8, 2, 1]
+                >>>
+
+           list.sort(key=callable_object),
+                callable object usually a function
+                this function must only accept a single parameter
+                value return from this function invocation will used to sort
+
+                    >>> a
+                    ['I', 'accidently', 'destroyed', 'the', 'whole', 'planet']
+                    >>> a.sort(key=len)
+                    >>> a
+                    ['I', 'the', 'whole', 'planet', 'destroyed', 'accidently']
+                    >>>
+
+            reversed() and sorted() => IMMUTABLE methods
+                these methods return a reverse iterator and a new list, respectively
+
+                    >>> x = [3, 9, 15, 1, 8]
+                    >>> y = sorted(x)
+                    >>> y
+                    [1, 3, 8, 9, 15]
+
+                reversed() will return a reversed iterator
+                use the iterator to reverse a list
+
+                    >>> q = reversed(y)
+                    >>> q
+                    <list_reverseiterator object at 0x1047055e0>
+                    >>> p = list(q)
+                    >>> p
+                    [15, 9, 8, 3, 1]
+                    >>>
+
+    dictionaries
+        heart of Python interpreter
+        UNORDERED
+        UNIQUE key-value pair inside cury braces
+            searchEngines = { 'google': 'https://google.com',
+                               'yahoo': 'https://yaho.com' }
+        keys must be IMMUTABLES
+            str, integers, tuples NOT list
+
+        dictionary constructor
+            list of tuples into a dictionary
+
+                >>> names_ages = [('Ali', 33), ('Farhan', 32), ('Zaki', 43)]
+                >>> names_ages
+                [('Ali', 33), ('Farhan', 32), ('Zaki', 43)]
+                >>> my_dictionary = dict(names_ages)
+                >>> my_dictionary
+                {'Ali': 33, 'Farhan': 32, 'Zaki': 43}
+                >>>
+
+            keyword arguments
+
+                >>> phonetic = dict(a='alfa', b='bravo', c='charlie', d='delta', e='echo')
+                >>> phonetic
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta', 'e': 'echo'}
+                >>>
+
+        dictionary copying is shallow
+
+                >>> phonetic
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta', 'e': 'echo'}
+                >>> comm = phonetic.copy()
+                >>> comm
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta', 'e': 'echo'}
+                >>> feed = dict(comm)
+                >>> feed
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta', 'e': 'echo'}
+
+        update(dictionary) can be concatenated if keys are different and values update if keys are the same
+                >>> g = dict(f='fox', g='gate', h='holland')
+                >>> g
+                {'f': 'fox', 'g': 'gate', 'h': 'holland'}
+                >>> feed.update(g)
+                >>> feed
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta', 'e': 'echo', 'f': 'fox', 'g': 'gate', 'h': 'holland'}
+                >>>
+
+                >>> h = dict(a='ALFAFA', b='BERLIN')
+                >>> feed.update(h)
+                >>> feed
+                {'a': 'ALFAFA', 'b': 'BERLIN', 'c': 'charlie', 'd': 'delta', 'e': 'echo', 'f': 'fox', 'g': 'gate', 'h': 'holland'}
+                >>>
+
+        dictionary iteration
+            dictionaries yield the next key on each iteration, return in arbitrary order
+            values can be retrieved using the square-bracket operator
+
+                >>> for key in phonetic:
+                ...     print(f'{key} => {phonetic[key]}')
+                ...
+                a => alfa
+                b => bravo
+                c => charlie
+                d => delta
+                e => echo
+                >>>
+
+                >>> for key in phonetic.keys():
+                ...     print(key)
+                ...
+                a
+                b
+                c
+                d
+                e
+                >>> for value in phonetic.values():
+                ...     print(value)
+                ...
+                alfa
+                bravo
+                charlie
+                delta
+                echo
+                >>>
+
+            use dict.items() to ge keys and values in tandem
+                yields a (key, value) tuple on each iteration
+
+                >>>
+                >>> for k, v in phonetic.items():
+                ...     print(f'{k} => {v}')
+                ...
+                a => alfa
+                b => bravo
+                c => charlie
+                d => delta
+                e => echo
+                >>>
+
+        use 'del dictionary[key]' to remove item in the dictionary
+
+                >>>
+                >>> del phonetic['e']
+                >>> phonetic
+                {'a': 'alfa', 'b': 'bravo', 'c': 'charlie', 'd': 'delta'}
+                >>>
+
+        values can be added and updated but not key. operation quite the same as list
+
+                >>>
+                >>> phonetic['b'] += ' banana'
+                >>> phonetic
+                {'a': 'alfa', 'b': 'bravo banana', 'c': 'charlie', 'd': 'delta'}
+                >>> phonetic['z'] = 'zulu'
+                >>> phonetic
+                {'a': 'alfa', 'b': 'bravo banana', 'c': 'charlie', 'd': 'delta', 'z': 'zulu'}
+                >>>
+
+        use pprint library
+
+                >>>
+                >>> from pprint import pprint as pp
+                >>> pp(phonetic)
+                {'a': 'alfa', 'b': 'bravo banana', 'c': 'charlie', 'd': 'delta', 'z': 'zulu'}
+                >>>
+
+    set
+        unordered collection of UNIQUE elements
+        sets are mutable
+        BUT elements inside a set must be immutable (cannot be updated)
+
+                >>>
+                >>> p = {8, 3, 100, 278, 13, 1}
+                >>> p
+                {1, 3, 100, 278, 8, 13}
+                >>>
+
+        common use of set is to remove duplicate elements in the list
+
+                >>> ls = [22, 1, 1, 3, 78, 9, 3, 6, 8, 8, 78, 49]
+                >>> myset = set(ls)
+                >>> myset
+                {1, 3, 6, 8, 9, 78, 49, 22}
+                >>>
+
+        sets are iterable but the order is random (arbitrary)
+            could also use pprint library
+
+                >>> for x in myset:
+                ...     print(x)
+                ...
+                1
+                3
+                6
+                8
+                9
+                78
+                49
+                22
+                >>> pp(myset)
+                {1, 3, 6, 8, 9, 78, 49, 22}
+                >>>
+
+        use set.add(element) to add single element
+        use set.update(iterable collection) to add multiple elements
+        set will not update any duplicate and maintain its uniqueness
+
+                >>> myset.add(100)
+                >>> myset
+                {1, 3, 100, 6, 8, 9, 78, 49, 22}
+                >>> myset.update((32, 'M'), (22, 'F'))          # tuples
+                >>> myset
+                {32, 1, 3, 100, 6, 8, 9, 'F', 78, 49, 'M', 22}
+
+                >>> myset.update([1, 109, 200, 100, 78, 'M', 'F'])  # list
+                >>> myset
+                {32, 1, 3, 100, 6, 8, 9, 'F', 200, 109, 78, 49, 'M', 22}
+                >>>
+
+        removing elements using:
+            remove  - produce error if not exist in the set
+            discard - remove if found but does not produce error if not exist
+
+                >>>
+                >>> myset.remove(300)
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                KeyError: 300
+                >>> myset.discard(300)
+                >>>
+
+        shallow copy using set.copy() and set() constructor
+
+                >>>
+                >>> set2 = myset.copy()
+                >>> set2
+                {32, 1, 3, 100, 6, 8, 9, 'F', 200, 109, 78, 49, 'M', 22}
+                >>> set3 = set(set2)
+                >>> set3
+                {32, 1, 3, 100, 6, 8, 9, 'F', 200, 109, 78, 49, 'M', 22}
+                >>>
+
+        set algebra
+            - union, difference, intersection
+            - subset, superset, disjoint
+
+                >>>
+                >>>
+                >>> blue_eyes = { 'Olivia', 'Harry', 'Lily', 'Jack', 'Amelis'}
+                >>> blonde = {'Harry', 'Jack', 'Amelia', 'Mia', 'Joshua' }
+                >>> smell_hcn = {'Harry', 'Amelia'}
+                >>> taste_ptc = { 'Harry', 'Lily', 'Amelia', 'Lola' }
+                >>> o_blood = { 'Mia', 'Joshua', 'Lily', 'Olivia' }
+                >>> b_blood = { 'Amelia', 'Jack' }
+                >>> a_blood = { 'Harry' }
+                >>> ab_blood = { 'Joshua', 'Lola' }
+                >>>
+                >>> blue_eyes.union(blonde)
+                {'Jack', 'Harry', 'Joshua', 'Mia', 'Lily', 'Amelis', 'Amelia', 'Olivia'}
+                >>> blue_eyes.union(blonde) == blonde.union(blue_eyes)
+                True
+                >>> # intersection to find common shared values
+                >>> blue_eyes.intersection(blonde)
+                {'Harry', 'Jack'}
+                >>> # find those that don't have any shared values or not having any connection
+                >>> blonde.difference(blue_eyes)
+                {'Amelia', 'Joshua', 'Mia'}
+                >>> blue_eyes.difference(blonde)
+                {'Olivia', 'Lily', 'Amelis'}
+                >>> # those above are for specific sides. we could use symmetric difference for both sides
+                >>> blue_eyes.symmetric_difference(blonde)
+                {'Joshua', 'Mia', 'Lily', 'Amelis', 'Amelia', 'Olivia'}
+                >>> blonde.symmetric_difference(blue_eyes)
+                {'Joshua', 'Mia', 'Lily', 'Amelis', 'Amelia', 'Olivia'}
+                >>> # check whether the set is a subset of the other
+                >>> smell_hcn.issubset(blonde)
+                True
+                >>> # check whether the set is a superset of the other
+                >>> taste_ptc.issuperset(smell_hcn)
+                True
+                >>> # check whether both sets are fully unrelated (disjoint)
+                >>> o_blood.disjoint(ab_blood)
+                Traceback (most recent call last):
+                  File "<stdin>", line 1, in <module>
+                AttributeError: 'set' object has no attribute 'disjoint'
+                >>> o_blood.isdisjoint(ab_blood)
+                False
+                >>>
+
+    protocols
+        a set of operations that a type must supoort to implement the protocol
+        do not need to be defined as interfaces or base classes
+        types only need to provide functioning implementations
+
+        protocols:                  container (in, not in), sized (len()),
+                                    iterable (yield items one by one as requested using for-loop or pprint)
+        implementing collections:   str, list, dict, range, tuple, set, bytes
+
+        protocols:                  sequence
+                                    item = sequence[index]
+                                    index = sequence.index(item)
+                                    num = sequence.count(sequence)
+                                    r = reverse(sequence)
+                                    must also support container, sized, and iterable
+        implementing collections:   str, list, range, tuple, bytes  (EXCLUDE dict, set)
+
+        protocols:                  mutable sequence
+        implementing collections:   list
+
+        protocols:                  mutable set
+        implementing collections:   set
+
+        protocols:                  mutable mapping
+        implementing collections:   dict
+

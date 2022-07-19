@@ -1,0 +1,403 @@
+
+Classes
+
+    - use to create custom types
+    - define structure and behavior of types (objects, as everything is an object)
+    - initializers
+        - compare and contrast with constructors in another languages
+        - establishing and enforcing invariants
+    - collaboration
+    - interfaces
+    - polymorphism and duck typing
+    - inheritance
+
+Defining Class
+--------------
+
+    class Flight:           # CamelCase
+        pass
+
+            >>> from airtravel import Flight
+            >>> Flight
+            <class 'airtravel.Flight'>
+
+    create object
+            >>> f = Flight()
+            >>> f
+            <airtravel.Flight object at 0x10d4def40>
+            >>> type(f)
+            <class 'airtravel.Flight'>
+            >>>
+
+
+Defining Instance Methods of a Class
+------------------------------------
+
+        class Flight:
+            # instance method must accept the reference of the actual instance when method is called (self)
+            # as the first argument. 'self' is only a convention
+
+            def number(self):
+                return 'SN060'
+
+        def main():
+            pass
+
+        if __name__ == '__main__':
+            main()
+
+
+        >>> f = Flight()
+        >>> f.number()
+        'SN060'
+
+        # THIS FORM MEANS the same as the above but never seen commonly
+        # the class method is attached to instance(f), remember def number(self)
+
+        >>> Flight.number(f)
+        'SN060'
+        >>>
+
+
+Instance Initializers
+---------------------
+
+__init__(self, args)
+
+    # instance method for initializing new objects
+    # is an initializer and NOT A CONSTRUCTOR
+    # purpose is to configure object that already exist by the time __init__() is called
+    # in Python construction object is provided by the run-time built-in constructor
+    # Python run-time system will check for the existence of the initializer and call it if present
+
+__init__(self, flight_no):
+    self._number = number
+
+    # _number is an object's attributed (properties)
+    # we don't need to declare before using the attributes
+    # _number means using the underscore we wanted the attirbutes to be encapsulated and not exposed
+
+"""Aircraft Class"""
+import sys
+
+
+# aircraft seating plan, letter 'I' is omitted to avoid confusion with number 1
+class Aircraft:
+    def __init__(self, registration, model, seat_rows, num_seats_per_row):
+        try:
+
+            self._registration = registration
+            self._model = model
+            self._seat_rows = seat_rows
+            self._num_seats_per_row = num_seats_per_row
+
+        except ValueError as e:
+            print(f'invalid input arguments: {e}', file=sys.stderr)
+
+    def registration(self):
+        return self._registration
+
+    def model(self):
+        return self._model
+
+    def seating_plan(self):
+        return range(1, self._seat_rows + 1), "ABCDEFGHJK"[:self._num_seats_per_row]
+
+from airtravel.aircraft import Aircraft
+a = Aircraft('G-EUPT', 'Airbus A319', 22, 8)
+a.registration()
+'G-EUPT'
+a.model()
+'Airbus A319'
+a.seating_plan()
+(range(1, 23), 'ABCDEFGH')
+seats_row, seats_per_row = a. seating_plan()
+seats_row
+range(1, 23)
+seats_per_row
+'ABCDEFGH'
+[x for x in seats_row]
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+
+Collaborating Classes
+---------------------
+
+"""Model for aircraft flights"""
+import sys
+from airtravel.aircraft import Aircraft
+
+
+class Flight:
+    """A flight with a particular passenger aircraft"""
+    def __init__(self, flight_no: any, aircraft: Aircraft):
+        try:
+            if not flight_no[:2].isalpha():
+                raise ValueError(f'no airline code in {flight_no}')
+            if not flight_no[:2].isupper():
+                raise ValueError(f'invalid airline code {flight_no}')
+            if not (flight_no[2:].isdigit() and int(flight_no[2:]) <= 9999):
+                raise ValueError(f'invalid route number {flight_no}')
+
+            self._flight_number = flight_no
+            self._aircraft = aircraft
+
+        except ValueError as e:
+            print(f'invalid input: {e}', file=sys.stderr)
+
+    # instance method must accept the reference of the actual instance when method is called (self)
+    # as the first argument. 'self' is only a convention
+    def aircraft_model(self):
+        return self._aircraft.model()
+
+    def number(self):
+        return self._flight_number
+
+    def airline(self):
+        return self._flight_number[:2]
+
+from airtravel.aircraft import Aircraft
+from airtravel.flight import Flight
+f = Flight('BA758', Aircraft('G-EUPT', 'Airbus A319', seat_rows=22, num_seats_per_row=6))
+f.airline()
+'BA'
+f.aircraft_model()
+'Airbus A319'
+f.number()
+'BA758'
+f._aircraft._registration
+'G-EUPT'
+f._aircraft._seat_rows
+22
+f._aircraft.seating_plan()
+(range(1, 23), 'ABCDEF')
+
+"""Model for aircraft flights"""
+import sys
+from airtravel.aircraft import Aircraft
+
+
+class Flight:
+    """A flight with a particular passenger aircraft"""
+
+    def __init__(self, flight_no: any, aircraft: Aircraft):
+        try:
+            if not flight_no[:2].isalpha():
+                raise ValueError(f'no airline code in {flight_no}')
+            if not flight_no[:2].isupper():
+                raise ValueError(f'invalid airline code {flight_no}')
+            if not (flight_no[2:].isdigit() and int(flight_no[2:]) <= 9999):
+                raise ValueError(f'invalid route number {flight_no}')
+
+            self._flight_number = flight_no
+            self._aircraft = aircraft
+
+            # seats allocation, row indices is one-based, but list is zero-based
+            # we need to waste the one beginning entry of the list + entry in each row in rows
+
+            rows, seats = self._aircraft.seating_plan()
+            self._seating = [None] + [{letter: None for letter in seats} for _ in rows]
+
+            # '_' is using in the comprehension as we are not interested in the row number
+            # we will use list indices instead
+            # '{ letter: None for letter in seats }' is also a dictionary comprehension
+            # this will create a dictionary with each key has 'None' value to show empty seat
+            # we use dictionary objects as list elements as we wanted distinct element for each row
+
+        except ValueError as e:
+            print(f'invalid input: {e}', file=sys.stderr)
+
+    # instance method must accept the reference of the actual instance when method is called (self)
+    # as the first argument. 'self' is only a convention
+    def aircraft_model(self):
+        return self._aircraft.model()
+
+    def number(self):
+        return self._flight_number
+
+    def airline(self):
+        return self._flight_number[:2]
+
+    def allocate_seats(self, seat, passenger):
+        """Allocate a seat to passenger,
+
+        Args:
+            seat: a seat designator such as '12C' or '21F
+            passenger: passenger name
+
+        Raises:
+            ValueError: If the seat is unavailable
+
+        """
+        rows, seat_letters = self._aircraft.seating_plan()
+        try:
+            letter = seat[-1]
+            if letter not in seat_letters:
+                raise ValueError(f'invalid seat letter {letter}')
+
+            row_text = seat[:-1]
+            try:
+                row = int(row_text)
+            except ValueError:
+                raise ValueError(f'invalid seat row {row_text}')
+
+            if row not in rows:
+                raise ValueError(f'invalid row number {row}')
+
+            if self._seating[row][letter] is not None:
+                raise ValueError(f'seat {seat} already occupied')
+
+            self._seating[row][letter] = passenger
+
+        except ValueError as e:
+            print(f'invalid input: {e}', file=sys.stderr)
+
+PyDev console: starting.
+Python 3.9.13 (main, May 24 2022, 21:28:12)
+[Clang 12.0.0 (clang-1200.0.32.29)] on darwin
+from airtravel.aircraft import Aircraft
+from airtravel.flight import Flight
+f = Flight('BA758', Aircraft('G-EUPT', 'Airbus A319', seat_rows=22, num_seats_per_row=6))
+f._seating
+[None, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}, {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}]
+from pprint import pprint as pp
+pp(f._seating)
+[None,
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}]
+f.allocate_seats('13A', 'Mozak')
+pp(f._seating)
+[None,
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': 'Mozak', 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}]
+f._seating[13]['A']
+'Mozak'
+f.allocate_seats('11B', 'Alice')
+f.allocate_seats('12C', 'Khaty')
+f._seating[13]['B']
+pp(f._seating)
+[None,
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': 'Alice', 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': 'Khaty', 'D': None, 'E': None, 'F': None},
+ {'A': 'Mozak', 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None},
+ {'A': None, 'B': None, 'C': None, 'D': None, 'E': None, 'F': None}]
+f.allocate_seats('111', 'Khaty')
+invalid input: invalid seat letter 1
+f.allocate_seats('AAA', 'Khaty')
+invalid input: invalid seat row AA
+f.allocate_seats('12C', 'Bagnis')
+invalid input: seat 12C already occupied
+f.allocate_seats('28C', 'Bagnis')
+invalid input: invalid row number 28
+
+Refactor Methods
+----------------
+
+def allocate_seats(self, seat, passenger):
+        """Allocate a seat to passenger,
+
+        Args:
+            seat: a seat designator such as '12C' or '21F
+            passenger: passenger name
+
+        Raises:
+            ValueError: If the seat is unavailable
+
+        """
+
+        row, letter = self._parse_seat(seat)
+
+        try:
+            if self._seating[row][letter] is not None:
+                raise ValueError(f'seat {seat} already occupied')
+
+            self._seating[row][letter] = passenger
+
+        except ValueError as e:
+            print(f'invalid input: {e}', file=sys.stderr)
+
+    def _parse_seat(self, seat):
+
+        rows, seat_letters = self._aircraft.seating_plan()
+        try:
+            letter = seat[-1]
+            if letter not in seat_letters:
+                raise ValueError(f'invalid seat letter {letter}')
+
+            row_text = seat[:-1]
+            try:
+                row = int(row_text)
+            except ValueError:
+                raise ValueError(f'invalid seat row {row_text}')
+
+            if row not in rows:
+                raise ValueError(f'invalid row number {row}')
+            return row, letter
+
+        except ValueError as e:
+            print(f'invalid input: {e}', file=sys.stderr)
+
+
+
+
+
+
+
+

@@ -1,0 +1,190 @@
+
+List Comprehension
+------------------
+
+words = "Why sometimes I have to believe as many as six impossible things before break".split()
+words
+['Why', 'sometimes', 'I', 'have', 'to', 'believe', 'as', 'many', 'as', 'six', 'impossible', 'things', 'before', 'break']
+
+# LIST COMPREHENSION
+[len(word) for word in words]
+[3, 9, 1, 4, 2, 7, 2, 4, 2, 3, 10, 6, 6, 5]
+
+[EXPR(item) for item in ITERABLE]
+    - the expression producing the new list's elements can be any Python expression
+
+    from math import factorial
+    f = [len(str(factorial(x))) for x in range(20)]
+    f
+    [1, 1, 1, 1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 18]
+
+Set Comprehension (No duplicates and unordered)
+
+    s = { str(factorial(x)) for x in range(10)}
+    s
+    {'6', '5040', '1', '24', '720', '40320', '362880', '120', '2'}
+
+compare to list
+    s = [str(factorial(x)) for x in range(10)]
+    s
+    ['1', '1', '2', '6', '24', '120', '720', '5040', '40320', '362880']
+
+
+Dictionary Comprehension
+------------------------
+
+variable = { expression-format (tuple unpacking) for key, value in dictionary.items() }
+
+        country_to_capital = { 'UK': 'London', }
+        country_to_capital.update({'Brazil': 'Rio De Janeiro', 'Morocco': 'Rabat', 'Sweden': 'Stockholm'})
+        country_to_capital
+        {'UK': 'London', 'Brazil': 'Rio De Janeiro', 'Morocco': 'Rabat', 'Sweden': 'Stockholm'}
+        capital_to_country = { capital: country for country, capital in country_to_capital.items() }
+        capital_to_country
+        {'London': 'UK', 'Rio De Janeiro': 'Brazil', 'Rabat': 'Morocco', 'Stockholm': 'Sweden'}
+
+in dictionary, keys are unique, later identical key will override the existing key
+
+        words = ['hi', 'hello', 'humble', 'hero', 'hunting']
+        word_dictionary = { x[0:2]: x for x in words }
+        word_dictionary
+        {'hi': 'hi', 'he': 'hero', 'hu': 'hunting'}
+        # see that 'he' in 'hero' overrides 'he' in 'hello', same as 'hunting' over 'humble'
+
+            >>> import os, glob
+            >>> file_sizes = { os.path.realpath(p): os.stat(p).st_size for p in glob.glob('*.py')}
+            >>> from pprint import pprint as pp
+            >>> pp(file_sizes)
+            {'/Users/mac/CodesPractice/Python/Pluralsight-Python-GettingStarted/corefunc/sqrt_alex.py': 830,
+             '/Users/mac/CodesPractice/Python/Pluralsight-Python-GettingStarted/corefunc/string_conversion.py': 943,
+             '/Users/mac/CodesPractice/Python/Pluralsight-Python-GettingStarted/corefunc/words.py': 1879}
+            >>>
+
+      don't get overboard on complex expression in comprehension
+      separate complex expression into functions
+
+                import sys
+                from math import sqrt
+                from typing import List
+
+                def is_prime(x):
+                    for i in range(2, int(sqrt(x) + 1)):
+                        if x % i == 0:
+                            return False
+                    return True
+
+                def find_factors(x):
+                    factors: list[int] = []     # 'list[int]' is a type hint
+                    for i in range(2, x + 1):
+                        if x % i == 0:
+                            factors.append(i)
+                    return factors
+
+                def input_checker(x):
+                    try:
+                        if x < 2:
+                            raise ValueError(f'number must be more than 2, invalid input {x}')
+                        is_prime(x)
+                    except (TypeError, ValueError) as e:
+                        print(f'input error: {e}', file=sys.stderr)
+
+                def main(x: int):
+                    input_checker(x)
+                    print(f'number {x} is {is_prime(x)}')
+                    print(f'factors of {x} are {find_factors(x)}')
+
+
+                if __name__ == '__main__':
+                    main(sys.argv[1])
+
+
+                >>> # FILTERING COMPREHENSIONS
+                >>> from check_prime_num import *
+                >>> [x for x in range(100) if is_prime(x)]
+                [0, 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+                >>> # test one of the number
+                >>> main(19)
+                number 19 is True
+                factors of 19 are [19]
+                >>> primes = [x for x in range(100) if is_prime(x)]
+                >>> primes
+                [0, 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+                >>> for i in primes[5:21]:
+                ...     main(i)
+                ...
+                number 7 is True
+                factors of 7 are [7]
+                number 11 is True
+                factors of 11 are [11]
+                number 13 is True
+                factors of 13 are [13]
+                number 17 is True
+                factors of 17 are [17]
+                number 19 is True
+                factors of 19 are [19]
+                number 23 is True
+                factors of 23 are [23]
+                number 29 is True
+                factors of 29 are [29]
+                number 31 is True
+                factors of 31 are [31]
+                number 37 is True
+                factors of 37 are [37]
+                number 41 is True
+                factors of 41 are [41]
+                number 43 is True
+                factors of 43 are [43]
+                number 47 is True
+                factors of 47 are [47]
+                number 53 is True
+                factors of 53 are [53]
+                number 59 is True
+                factors of 59 are [59]
+                number 61 is True
+                factors of 61 are [61]
+                number 67 is True
+                factors of 67 are [67]
+                >>>
+
+
+Generator Expressions
+---------------------
+
+syntax:
+
+(expr(item) for item in iterable)
+
+e.g.
+
+thousand_squares = (x**2 for x in range(1, 1001))        # like comprehension for tuple
+thousand_squares                                         # generator created
+<generator object <genexpr> at 0x105d15660>
+list(thousand_squares)                                   # forced evaluation using list() constructor
+
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324,
+361, 400, 441, 484, 529, 576, 625, 676, 729, 784, 841, 900, 961, 1024, 1089, 1156,
+1225, 1296, 1369, 1444, 1521, 1600, 1681, 1764, 1849, 1936, 2025, 2116, 2209, 2304,
+2401, 2500, 2601, 2704, 2809, 2916, 3025, 3136, 3249, 3364, 3481, 3600, 3721, 3844,
+3969, 4096, 4225, 4356, 4489, 4624, 4761, 4900, 5041, 5184, 5329, 5476, 5625, 5776,
+5929, 6084, 6241, 6400, 6561, 6724, 6889, 7056, 7225, 7396, 7569, 7744, 7921, 8100,
+...
+
+# after exhausting al its yield, generator (iterator) needed to recreated again due to laziness
+# the following execution will not yield anything
+# generators are a single-use objects, each time we call a generator function,
+#   it creates a new generator object
+# to recreate a generator from a generator expression, you must execute the expression again
+
+list(thousand_squares)
+[]
+
+# USING GENERATOR EXPRESSION WILL USE VERY LIMITED MEMORY CONSUMPTION compare to LIST EXPRESSION
+# IF LIST EXPRESSION sum() WILL NEARLY USE AROUNG 40MB of MEMORY BUT NOT WITH GENERATOR EXPRESSION
+
+sum_thousand_squares = sum(x**2 for x in range(1, 1001))    # better readability
+
+# could also be written as the following:
+sum_thousand_squares = sum((x**2 for x in range(1, 1001)))
+
+sum_thousand_squares
+333833500

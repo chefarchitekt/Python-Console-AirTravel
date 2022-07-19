@@ -1,0 +1,135 @@
+
+Refactor for Error Handling
+
+from:
+
+DIGIT_MAP = {
+    'zero': '0',
+    'one': '1',
+    'two': '2',
+    'three': '3',
+    'four': '4',
+    'five': '5',
+    'six': '6',
+    'seven': '7',
+    'eight': '8',
+    'nine': '9',
+}
+
+
+def convert(s):
+    try:
+        number = ''
+        for token in s:
+            number += DIGIT_MAP[token]
+        x = int(number)
+        print(f'conversion succeeded! x = {x}')
+    except KeyError:
+        print('conversion failed')
+        x = -1
+    except TypeError:
+        print('conversion failed')
+        x = -1
+    return x
+
+to:
+
+DIGIT_MAP = {
+    'zero': '0',
+    'one': '1',
+    'two': '2',
+    'three': '3',
+    'four': '4',
+    'five': '5',
+    'six': '6',
+    'seven': '7',
+    'eight': '8',
+    'nine': '9',
+}
+
+
+def convert(s):
+    x = -1
+    try:
+        number = ''
+        for token in s:
+            number += DIGIT_MAP[token]
+        x = int(number)
+        print(f'conversion succeeded! x = {x}')
+    except (KeyError, TypeError):
+        print('conversion failed')  # if we remove this statement, it will produce error
+        # empty block is not permitted
+    return x
+
+to:
+
+DIGIT_MAP = {
+    'zero': '0',
+    'one': '1',
+    'two': '2',
+    'three': '3',
+    'four': '4',
+    'five': '5',
+    'six': '6',
+    'seven': '7',
+    'eight': '8',
+    'nine': '9',
+}
+
+
+def convert(s):
+    x = -1
+    try:
+        number = ''
+        for token in s:
+            number += DIGIT_MAP[token]
+        x = int(number)
+    except (KeyError, TypeError):
+        pass
+        # empty block is not permitted, use 'pass' a no-op syntactically permissible blocks
+        3 that are emantically empty
+    return x
+
+import sys
+
+
+def sqrt(x):        # avoid catching type error
+    """Compute squre roots using the method of Heron of Alexandria
+        Args:
+            x: the number of which the square root is to be computed
+        Returns:
+            the square root of x
+        Raises:
+            ValueError: If x is negative
+    """
+
+    guess = x
+    i = 0
+    try:
+        if x < 0:
+            raise ValueError('Cannot compute square root of ' f'negative number {x}')
+        while guess * guess != 0 and i < 20:
+            guess = (guess + x / guess) / 2.0
+            i += 1
+        return guess
+    except (ZeroDivisionError, ValueError) as e:
+        print(f'calculation error: {e}', file=sys.stderr)
+        # raise
+
+
+def main():
+    print(sqrt(9))
+    print(sqrt(2))
+    print(sqrt(-1))
+
+
+if __name__ == '__main__':
+    main()
+
+
+programmer's errors:
+    - IndentationError
+    - SyntaxError
+    - NameError
+
+These should never be caught
