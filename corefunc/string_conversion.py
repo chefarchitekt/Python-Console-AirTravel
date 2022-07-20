@@ -23,7 +23,7 @@ def convert(s):
             number += DIGIT_MAP[token]
         x = int(number)
         return x
-        # print(f'conversion succeeded! x = {x}')
+        # print(f 'conversion succeeded! x = {x}')
     except (KeyError, TypeError) as e:
         # print('conversion failed')  # if we remove this statement, it will produce error
         # empty block is not permitted

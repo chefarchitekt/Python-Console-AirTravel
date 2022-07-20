@@ -2,7 +2,7 @@ import sys
 
 
 def sqrt(x):        # avoid catching type error
-    """Compute squre roots using the method of Heron of Alexandria
+    """Compute square roots using the method of Heron of Alexandria
         Args:
             x: the number of which the square root is to be computed
         Returns:

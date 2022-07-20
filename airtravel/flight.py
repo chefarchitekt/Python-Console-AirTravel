@@ -137,3 +137,12 @@ class Flight:
         return sum(sum(1 for s in row.values() if s is None)
                    for row in self._seating
                    if row is not None)
+
+    def passenger_seats(self):
+        """An iterable series (generator) of passenger seating locations"""
+        row_numbers, seat_letters = self._aircraft.seating_plan()
+        for row in row_numbers:
+            for letter in seat_letters:
+                passenger = self._seating[row][letter]
+                if passenger is not None:
+                    yield tuple(passenger, f'{row}{letter}')
