@@ -145,4 +145,4 @@ class Flight:
             for letter in seat_letters:
                 passenger = self._seating[row][letter]
                 if passenger is not None:
-                    yield tuple(passenger, f'{row}{letter}')
+                    yield passenger, f'{row}{letter}'

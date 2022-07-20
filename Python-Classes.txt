@@ -3,6 +3,7 @@ Classes
 
     - use to create custom types
     - define structure and behavior of types (objects, as everything is an object)
+    - NO public, privete, or protected access modifier in python
     - initializers
         - compare and contrast with constructors in another languages
         - establishing and enforcing invariants
@@ -394,9 +395,36 @@ def allocate_seats(self, seat, passenger):
         except ValueError as e:
             print(f'invalid input: {e}', file=sys.stderr)
 
+No interfaces in Python OOP (like Javascript)
+Modules with duck typing can replace benefits of interface
+
+Polymorphism in Python is making use of static methods
+    - it is achieved thru duck typing
+    - it does not rely on shared base classes or interfaces
+    -
+Inheritance in Python is primarily useful for sharing implementation between classes
+    - all methods including special methods are inherited
+
+base class:
+
+    class A:
+        def method1():
+            pass
+
+derived class:
+
+    class B(A):
+        def method2():
+            pass
 
 
+f = B()
+f.method1()
+f.method2()
 
+g = B()
+g.method1()
+g.method2()
 
 
 
