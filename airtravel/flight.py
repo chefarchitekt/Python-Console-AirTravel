@@ -66,7 +66,7 @@ class Flight:
             if self._seating[row][letter] is not None:
                 raise ValueError(f'seat {seat} already occupied')
 
-            self._seating[row][letter] = passenger
+            self._seating[row][letter] = passenger  # Allocate the seat to the passenger
 
         except (ValueError, TypeError) as e:
             print(f'invalid input: {e}', file=sys.stderr)

@@ -25,7 +25,6 @@ class Aircraft:
         return range(1, self._seat_rows + 1), "ABCDEFGHJKLMNOPQRS"[:self._num_seats_per_row]
 
 
-
 _registered_aircrafts = {}
 
 
