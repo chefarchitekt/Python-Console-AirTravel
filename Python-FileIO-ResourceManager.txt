@@ -1,0 +1,136 @@
+
+Explicit is better than Implicit
+
+open()
+    - open a fie for reading and writing
+    - options
+        - file: the path to the file (required)
+        - mode: read, write, append (for binary or text) - better explicit
+            - r , w, a => reading, writing, appending
+            - b, t     => binary, text
+            - combination of both; wb => write binary, wt => write text,
+              e.g. rb, rt, ab, at
+        - encoding: encoding to use in the text mode (text mode only and better explicitly defined)
+        - returns
+            - file-like object
+            - when 'object',we expect certain attributes and methods
+
+at file system level, file contains a series of bytes (binary)
+    - binary mode: bytes object without any decoding, and raw
+    - text mode: need encoding, universal new line '\n' for OSes (no more '\r\n' for windows
+        - encoding is required (default is UTF-8), check documentatio for compatible issues on utf-8
+
+writing text files:
+------------------
+
+f = open(filename, mode, options)
+f = open('wasterland.txt', mode='wt', encoding='utf-8')
+
+after using open(), with mode of wt (write-text)
+    - we get the file-like object with various attributes  and methods
+one of the method is write:
+    - file-object.write('..') method
+        - return code points (number of characters written on the file (or file buffer)
+        - not the number of bytes, but characters (DO NOT sum these numbers to determine file length)
+    - file-like object.close() method
+        - like flush method of c lang
+        - file written will have extra bytes on windows platform due to adapting to '\r\n' for text file
+
+reading text files:
+-------------------
+
+g = open(filename, mode, options)
+g = open('wasteland.txt', mode='rt', enconding='utf-8')
+
+    - read(..) method
+    - file-object read(codepoints)
+    - how many codepoints (characters) that can be read at a time function invoked
+    - read() without arguments allow us to read all characters after the newline ('\n')
+
+    - seek() method
+    - send the pointer back to the beginning of the file (like stack) -zero-offset
+         - return value is the new file pointer position (0)
+    - DO NOT close the file to use seek()
+    - under text mode:
+        - seek() cannot be used to move to arbitrary offset
+        - only 0  and values from tell() method are allowed
+        - any other values will result in undefined behavior
+
+     - readline()
+     - allow to read all characters in a line
+     - may or may not terminated with the new line character ('\n') of the last line
+     - beware that the last line may not contain the newline character
+
+    - remember to close the file with close() method
+
+appending text file:
+-------------------
+mode='at'
+
+    - NO writeline()
+    - YES with writelines()
+    - MUST add your own '\n'
+
+file iteration:
+--------------
+
+    - file objects support iterator protocol
+    - each iteration yield the next line of the file
+    - can use iteration loop functions like for-loop
+
+import sys
+
+f = open(sys.argv[1], mode='rt', encoding='utf-8')
+try:
+    for line in f:
+        # print(line)       # always introduced '\n' when writing to the output
+        sys.stdout.write()  # use thi method instead
+finally:
+    f.close()
+
+file usage pattern
+
+f = open(...)
+# work with the file
+f.close()
+
+    with-blocks
+        - mechanism to pair open() and close() file automatically
+
+def read_series(filename):
+    with open(filename, mode='rt', encoding='utf-8') as f:
+        return [int(line.strip()) for line in f]
+
+File-like objects
+-----------------
+
+Objects that behave like files
+A semi-formal protocol
+File behaviors are too varied for a fully specified protocol
+URL reader also return file-like objects
+    - file-like object methods promote duck-typing (polymorphism)
+
+Context Managers
+-----------------
+
+from contextlib import closing
+
+closing() method
+
+class RefrigeratorRaider:
+    def open(self):
+        print('open fridge door.')
+    def take(self, food):
+        print(f'Finding {food} ..")
+        if food == 'deep fried pizza':
+            raise RuntimeError('Health Warning!')
+        print(f'Taking {food')
+    def close(self):
+        print('Close fridge door.')
+
+def raid(food):
+    with closing(RefrigeratorRaider()) as r:
+    r.open()
+    r.take(food)
+    # r. close()          # DON'T explicitly CALL close() when using closing()
+
